@@ -1113,9 +1113,50 @@
       gap:1.8rem;
       transform:translateX(100%);
       transition:transform 0.4s ease;
+      z-index:1001;
     }
     nav ul.open{transform:translateX(0);}
     .nav-toggle{display:block;}
+
+    /* Language switcher inside the mobile menu: expands inline instead of floating */
+    .lang-switch{width:100%;}
+    .lang-btn{
+      width:100%;
+      font-size:0.85rem;
+      letter-spacing:1px;
+    }
+    .lang-dropdown{
+      position:static;
+      visibility:visible;
+      opacity:1;
+      transform:none;
+      width:100%;
+      max-height:0;
+      overflow:hidden;
+      border:none;
+      background:none;
+      padding:0;
+      margin-top:0;
+      transition:max-height 0.3s ease, margin-top 0.3s ease;
+    }
+    .lang-switch.open .lang-dropdown{
+      max-height:220px;
+      margin-top:0.8rem;
+    }
+    .lang-dropdown button{
+      font-size:0.85rem;
+      padding:0.5rem 0.2rem;
+    }
+
+    /* Commission button: full width, fully visible inside the mobile menu */
+    .commission-li{width:100%;}
+    .commission-btn{
+      width:100%;
+      box-sizing:border-box;
+      white-space:normal;
+      text-align:center;
+      padding:0.8rem 1.2rem;
+    }
 
     .hero-main{flex-direction:column;text-align:left;}
     .hero-photo{width:60%;flex:none;align-self:flex-start;}
@@ -1155,21 +1196,29 @@
   /* ---------- MOBILE: INTRO + HERO FIX ---------- */
   @media (max-width:768px){
     /* Intro screen */
-    .intro-panel.left,
-    .intro-panel.right{
-      background:#0e0e0e;
+    .intro-panel.left{
       padding-right:0;
+      justify-content:flex-end;
+      background:
+        linear-gradient(rgba(0,0,0,0.55),rgba(0,0,0,0.55)),
+        url('images/hero-photo.jpg') center 30%/cover no-repeat;
+    }
+    .intro-panel.right{
       padding-left:0;
+      justify-content:flex-start;
+      background:
+        linear-gradient(rgba(0,0,0,0.55),rgba(0,0,0,0.55)),
+        url('images/artist-photo.jpg') center 25%/cover no-repeat;
     }
     .intro-panel-icon{display:none;}
     .intro-panel-text{
-      font-size:clamp(2.5rem,12vw,5rem);
+      font-size:clamp(1.6rem,7vw,2.8rem);
       white-space:nowrap;
     }
     .intro-tagline{
       font-size:0.65rem;
       letter-spacing:0.15em;
-      transform:translate(-50%, calc(-50% + (clamp(2.5rem,12vw,5rem) / 2) + 12vh));
+      transform:translate(-50%, calc(-50% + (clamp(1.6rem,7vw,2.8rem) / 2) + 12vh));
     }
 
     /* Hero section */
@@ -1202,6 +1251,24 @@
       align-items:flex-start;
       gap:0.6rem;
       margin-top:1.5rem;
+      padding-left:1.5rem;
+    }
+    .hero-footer .disciplines,
+    .hero-footer .culture-tag,
+    .hero-footer .origin-tag{
+      display:block;
+      font-size:0.65rem;
+      letter-spacing:0.12em;
+      text-align:left;
+    }
+    .scroll-cue{
+      position:static;
+      display:block;
+      left:auto;
+      transform:none;
+      text-align:center;
+      margin-top:1rem;
+      width:100%;
     }
   }
 </style>
@@ -1312,7 +1379,7 @@
         <li><button type="button" data-lang="pt">🇵🇹 Português</button></li>
       </ul>
     </li>
-    <li><button type="button" class="commission-btn" id="commissionBtnNav" data-i18n="nav.commission">Commission a Work</button></li>
+    <li class="commission-li"><button type="button" class="commission-btn" id="commissionBtnNav" data-i18n="nav.commission">Commission a Work</button></li>
   </ul>
 </nav>
 
@@ -1861,6 +1928,9 @@
         e.stopPropagation();
         applyLanguage(btn.getAttribute('data-lang'));
         langSwitchEl.classList.remove('open');
+        const navMenuEl = document.getElementById('navMenu');
+        if (navMenuEl) navMenuEl.classList.remove('open');
+        setNavToggleIcon(false);
       });
     });
     document.addEventListener('click', () => langSwitchEl.classList.remove('open'));
@@ -1915,8 +1985,30 @@
   // ---------- Mobile nav toggle ----------
   const navToggle = document.getElementById('navToggle');
   const navMenu = document.getElementById('navMenu');
-  navToggle.addEventListener('click', () => navMenu.classList.toggle('open'));
-  navMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => navMenu.classList.remove('open')));
+
+  function setNavToggleIcon(isOpen) {
+    navToggle.innerHTML = isOpen ? '&times;' : '&#9776;';
+  }
+
+  function closeMobileNav() {
+    navMenu.classList.remove('open');
+    setNavToggleIcon(false);
+    const langSwitchEl2 = document.getElementById('langSwitch');
+    if (langSwitchEl2) langSwitchEl2.classList.remove('open');
+  }
+
+  navToggle.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const willOpen = !navMenu.classList.contains('open');
+    navMenu.classList.toggle('open', willOpen);
+    setNavToggleIcon(willOpen);
+  });
+  navMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', closeMobileNav));
+  document.addEventListener('click', (e) => {
+    if (!navMenu.classList.contains('open')) return;
+    if (navMenu.contains(e.target) || navToggle.contains(e.target)) return;
+    closeMobileNav();
+  });
 
   // ---------- Save scroll position before leaving to a technique page ----------
   document.querySelectorAll('a[href*="acrylic"], a[href*="graphite"], a[href*="watercolor"], a[href*="digital"], a[href*="mixed-media"]').forEach(link => {
