@@ -76,6 +76,7 @@
   nav ul li a:hover{opacity:1;color:var(--accent-soft);}
   nav ul li a.active{opacity:1;color:var(--accent);}
   .nav-toggle{display:none;background:none;border:none;color:var(--text-light);font-size:1.6rem;cursor:pointer;}
+  .menu-close{display:none;}
   .nav-toggle-group{display:block;}
   .lang-switch-mobile{display:none;}
 
@@ -1110,9 +1111,9 @@
       width:70%;
       background:rgba(74,55,40,0.97);
       flex-direction:column;
-      justify-content:center;
+      justify-content:flex-start;
       align-items:flex-start;
-      padding:2rem 2rem;
+      padding:1.5rem 2rem 2rem;
       gap:1.8rem;
       transform:translateX(100%);
       transition:transform 0.4s ease;
@@ -1120,6 +1121,20 @@
     }
     nav ul.open{transform:translateX(0);}
     .nav-toggle{display:block;}
+    .menu-close{
+      display:block;
+      position:absolute;
+      top:1.2rem;
+      right:1.5rem;
+      background:none;
+      border:none;
+      color:var(--text-light);
+      font-size:1.6rem;
+      line-height:1;
+      cursor:pointer;
+      z-index:1002;
+    }
+    .commission-li{margin-top:-0.8rem;}
 
     /* Language switcher inside the mobile menu: expands inline instead of floating */
     .lang-switch{width:100%;}
@@ -1240,15 +1255,23 @@
       font-size:clamp(3rem,15vw,5rem);
     }
     .hero-photo{
-      width:100%;
-      height:45vw;
+      width:90%;
+      height:auto;
+      min-height:50vw;
       aspect-ratio:auto;
       flex:none;
       align-self:center;
-      margin-top:1.5rem;
+      margin:1.5rem auto 0;
+      background:var(--bg-primary);
     }
     .hero-photo img{
-      object-position:center top;
+      position:static;
+      top:auto;left:auto;
+      width:100%;
+      height:auto;
+      min-height:50vw;
+      object-fit:contain;
+      object-position:center;
     }
     .hero-footer{
       position:relative;
@@ -1270,11 +1293,12 @@
     .scroll-cue{
       position:static;
       display:block;
+      float:none;
       left:auto;
       transform:none;
       text-align:center;
-      margin-top:1rem;
       width:100%;
+      margin:1.5rem auto 0;
     }
 
     /* Hamburger icon: fixed footprint so ☰ / × never shifts or disappears */
@@ -1329,15 +1353,17 @@
       left:auto;
       background:rgba(44,31,20,0.97);
       border:1px solid rgba(232,220,200,0.15);
-      min-width:140px;
-      padding:0.4rem 0;
+      box-shadow:0 4px 12px rgba(0,0,0,0.4);
+      width:140px;
+      max-width:140px;
+      min-width:0;
+      padding:0;
       opacity:0;
       visibility:hidden;
       transform:translateY(-6px);
       transition:opacity 0.25s ease, transform 0.25s ease, visibility 0.25s;
       z-index:1002;
       max-height:none;
-      width:auto;
       margin-top:0;
     }
     .lang-switch-mobile.open .lang-dropdown{
@@ -1345,9 +1371,13 @@
       visibility:visible;
       transform:translateY(0);
     }
+    .lang-switch-mobile .lang-dropdown li{
+      margin:0;
+    }
     .lang-switch-mobile .lang-dropdown button{
       font-size:0.8rem;
-      padding:0.5rem 1rem;
+      padding:0.6rem 1rem;
+      margin:0;
     }
   }
 </style>
@@ -1453,6 +1483,7 @@
     <button class="nav-toggle" id="navToggle">&#9776;</button>
   </div>
   <ul id="navMenu">
+    <button type="button" class="menu-close" id="menuClose" aria-label="Close menu">&times;</button>
     <li><a href="#artist" class="nav-link" data-i18n="nav.artist">Artist</a></li>
     <li><a href="#introduction" class="nav-link" data-i18n="nav.introduction">Introduction</a></li>
     <li><a href="#manifesto" class="nav-link" data-i18n="nav.manifesto">Manifesto</a></li>
@@ -2100,9 +2131,10 @@
   // ---------- Mobile nav toggle ----------
   const navToggle = document.getElementById('navToggle');
   const navMenu = document.getElementById('navMenu');
+  const menuClose = document.getElementById('menuClose');
 
   function setNavToggleIcon(isOpen) {
-    navToggle.innerHTML = isOpen ? '&times;' : '&#9776;';
+    // Hamburger icon stays constant; close is handled by the in-panel × button.
   }
 
   function closeMobileNav() {
@@ -2117,6 +2149,12 @@
     navMenu.classList.toggle('open', willOpen);
     setNavToggleIcon(willOpen);
   });
+  if (menuClose) {
+    menuClose.addEventListener('click', (e) => {
+      e.stopPropagation();
+      closeMobileNav();
+    });
+  }
   navMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', closeMobileNav));
   document.addEventListener('click', (e) => {
     if (!navMenu.classList.contains('open')) return;
