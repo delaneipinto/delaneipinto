@@ -493,6 +493,10 @@
     0%,100%{transform:translate(-50%,0);}
     50%{transform:translate(-50%,8px);}
   }
+  @keyframes bounceCentered{
+    0%,100%{transform:translate(0,0);}
+    50%{transform:translate(0,8px);}
+  }
 
   /* ---------- INTRODUCTION SECTION ---------- */
   #introduction{
@@ -1134,6 +1138,7 @@
       left:0;right:0;
       bottom:auto;
       transform:none;
+      animation:bounceCentered 2.2s infinite;
     }
     .menu-close{
       display:block;
@@ -1314,6 +1319,7 @@
       text-align:center;
       width:100%;
       margin:1.5rem auto;
+      animation:bounceCentered 2.2s infinite;
     }
 
     /* Hamburger icon: fixed footprint so ☰ / × never shifts or disappears */
