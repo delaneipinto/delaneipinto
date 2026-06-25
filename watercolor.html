@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Watercolor — Delanei Pinto</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,400;1,500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-primary:#2c1f14;
+    --bg-secondary:#3d2b1a;
+    --bg-light:#f0ebe2;
+    --bg-mid:#4a3728;
+    --accent:#8b6914;
+    --accent-soft:#c8a84b;
+    --text-light:#e8dcc8;
+    --text-dark:#2c1f14;
+    --text-muted:#a89880;
+    --stone:#c9bfad;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    font-family:'DM Sans',sans-serif;
+    color:var(--text-dark);
+    background:var(--bg-light);
+    overflow-x:hidden;
+  }
+  h1,h2,h3{font-family:'DM Sans',sans-serif;font-weight:300;}
+  img{display:block;width:100%;height:100%;object-fit:cover;}
+  .placeholder-img{
+    width:100%;height:100%;
+    background:linear-gradient(135deg,var(--stone),var(--bg-mid));
+    display:flex;align-items:center;justify-content:center;
+    color:rgba(232,220,200,0.75);
+    font-size:0.75rem;letter-spacing:2px;text-transform:uppercase;
+    text-align:center;padding:1rem;
+  }
+
+  /* ---------- NAV ---------- */
+  nav{
+    position:fixed;top:0;left:0;width:100%;z-index:1000;
+    display:flex;justify-content:space-between;align-items:center;
+    padding:1.2rem 4%;
+    background:rgba(74,55,40,0.92);
+    backdrop-filter:blur(6px);
+    flex-wrap:wrap;
+    gap:0.8rem;
+  }
+  .back-link{
+    color:var(--text-light);
+    text-decoration:none;
+    font-size:0.85rem;
+    letter-spacing:1px;
+    text-transform:uppercase;
+    opacity:0.9;
+    transition:opacity 0.3s, color 0.3s;
+  }
+  .back-link:hover{opacity:1;color:var(--accent-soft);}
+  nav ul{list-style:none;display:flex;flex-wrap:wrap;gap:1.4rem;}
+  nav ul li a{
+    color:var(--text-light);
+    text-decoration:none;
+    font-size:0.76rem;
+    letter-spacing:0.8px;
+    text-transform:uppercase;
+    opacity:0.8;
+    transition:opacity 0.3s, color 0.3s;
+    white-space:nowrap;
+  }
+  nav ul li a:hover, nav ul li a.active{opacity:1;color:var(--accent);}
+  .nav-toggle{display:none;background:none;border:none;color:var(--text-light);font-size:1.6rem;cursor:pointer;}
+
+  /* ---------- LANGUAGE SWITCHER ---------- */
+  .lang-switch{position:relative;list-style:none;}
+  .lang-btn{
+    background:none;border:none;color:var(--text-light);font-size:0.76rem;
+    letter-spacing:0.8px;text-transform:uppercase;opacity:0.85;cursor:pointer;
+    font-family:'DM Sans',sans-serif;display:flex;align-items:center;gap:0.3rem;padding:0;
+    transition:opacity 0.3s, color 0.3s;
+  }
+  .lang-btn:hover{opacity:1;color:var(--accent-soft);}
+  .lang-caret{font-size:0.7rem;transition:transform 0.25s ease;}
+  .lang-switch.open .lang-caret{transform:rotate(180deg);}
+  .lang-dropdown{
+    list-style:none;position:absolute;top:calc(100% + 0.8rem);right:0;
+    background:rgba(44,31,20,0.97);border:1px solid rgba(232,220,200,0.15);
+    min-width:150px;padding:0.4rem 0;opacity:0;visibility:hidden;transform:translateY(-6px);
+    transition:opacity 0.25s ease, transform 0.25s ease, visibility 0.25s;z-index:2000;
+  }
+  .lang-switch.open .lang-dropdown{opacity:1;visibility:visible;transform:translateY(0);}
+  .lang-dropdown li{list-style:none;}
+  .lang-dropdown button{
+    display:block;width:100%;text-align:left;background:none;border:none;color:var(--text-light);
+    font-family:'DM Sans',sans-serif;font-size:0.8rem;letter-spacing:0.3px;padding:0.55rem 1.1rem;
+    cursor:pointer;opacity:0.85;transition:opacity 0.2s, background 0.2s;
+  }
+  .lang-dropdown button:hover{opacity:1;background:rgba(232,220,200,0.08);}
+  .lang-dropdown button.active{color:var(--accent);opacity:1;}
+
+  /* ---------- CUSTOM CURSOR ---------- */
+  #cursorDot{
+    position:fixed;
+    top:0;left:0;
+    width:10px;height:10px;
+    border-radius:50%;
+    background:var(--accent);
+    pointer-events:none;
+    z-index:9999;
+    transform:translate(-50%,-50%);
+    transition:width 0.4s ease, height 0.4s ease, opacity 0.2s ease;
+    opacity:0.9;
+  }
+  #cursorDot.cursor-hover{width:22px;height:22px;opacity:0.65;}
+  body.custom-cursor-active{cursor:none;}
+  body.custom-cursor-active a,
+  body.custom-cursor-active .work,
+  body.custom-cursor-active button{cursor:none;}
+
+  /* ---------- HERO HEADER ---------- */
+  .page-hero{
+    min-height:55vh;
+    background:var(--bg-primary);
+    color:var(--text-light);
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:flex-start;
+    padding:10rem 6% 4rem;
+  }
+  .page-hero .section-label{
+    font-size:0.8rem;
+    letter-spacing:3px;
+    text-transform:uppercase;
+    color:var(--accent);
+    margin-bottom:1rem;
+  }
+  .page-hero h1{
+    font-size:clamp(2.4rem,6vw,4.5rem);
+    font-weight:300;
+    margin-bottom:1.2rem;
+  }
+  .page-hero p{
+    max-width:620px;
+    font-size:1.05rem;
+    line-height:1.8;
+    color:rgba(232,220,200,0.85);
+  }
+
+  /* ---------- WORKS GRID ---------- */
+  .works-section{
+    background:var(--bg-light);
+    padding:5rem 6% 7rem;
+  }
+  .works-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:2.4rem;
+    max-width:1400px;
+    margin:0 auto;
+  }
+  .work-card{
+    cursor:pointer;
+    background:#fff;
+    box-shadow:0 4px 18px rgba(44,31,20,0.08);
+    transition:transform 0.4s ease, box-shadow 0.4s ease;
+  }
+  .work-card:hover{
+    transform:translateY(-6px);
+    box-shadow:0 10px 28px rgba(44,31,20,0.16);
+  }
+  .work-card-img{
+    aspect-ratio:4/5;
+    overflow:hidden;
+  }
+  .work-card-img img{transition:transform 0.5s ease;}
+  .work-card:hover .work-card-img img{transform:scale(1.06);}
+  .work-card-body{padding:1.4rem 1.5rem 1.7rem;}
+  .work-card-body h3{
+    font-size:1.15rem;
+    font-weight:500;
+    color:var(--text-dark);
+    margin-bottom:0.2rem;
+  }
+  .work-card-year{
+    display:block;
+    font-size:0.78rem;
+    letter-spacing:1px;
+    text-transform:uppercase;
+    color:var(--accent);
+    margin-bottom:0.7rem;
+  }
+  .work-card-desc{
+    font-size:0.92rem;
+    line-height:1.6;
+    color:#5c4f42;
+  }
+  .coming-soon{
+    max-width:600px;
+    margin:3rem auto;
+    text-align:center;
+    font-family:'Cormorant Garamond',serif;
+    font-style:italic;
+    font-size:1.5rem;
+    line-height:1.6;
+    color:var(--text-dark);
+    border:1px solid rgba(44,31,20,0.15);
+    padding:3.5rem 2.5rem;
+  }
+
+  /* ---------- FOOTER ---------- */
+  footer{
+    text-align:center;
+    padding:2rem;
+    font-size:0.75rem;
+    letter-spacing:1px;
+    color:var(--text-dark);
+    opacity:0.6;
+    background:var(--bg-light);
+  }
+
+  /* ---------- FADE-IN ---------- */
+  .fade-in{
+    opacity:0;
+    transform:translateY(30px);
+    transition:opacity 0.8s ease, transform 0.8s ease;
+  }
+  .fade-in.visible{opacity:1;transform:translateY(0);}
+
+  /* ---------- LIGHTBOX ---------- */
+  .lightbox{
+    position:fixed;inset:0;
+    background:rgba(44,31,20,0.96);
+    display:flex;align-items:center;justify-content:center;
+    z-index:3000;opacity:0;visibility:hidden;
+    transition:opacity 0.4s ease;
+    padding:3rem 2rem;
+  }
+  .lightbox.active{opacity:1;visibility:visible;}
+  .lightbox-content{
+    max-width:880px;width:100%;text-align:center;
+    opacity:0;transform:scale(0.96);
+    transition:opacity 0.45s ease, transform 0.45s ease;
+  }
+  .lightbox.active .lightbox-content{opacity:1;transform:scale(1);}
+  .lightbox-content img{width:100%;max-height:62vh;object-fit:contain;background:rgba(0,0,0,0.2);}
+  .lightbox-info{margin-top:1.6rem;color:var(--text-light);}
+  .lightbox-info h3{font-size:1.5rem;font-weight:500;margin-bottom:0.4rem;}
+  .lightbox-info .lightbox-meta{
+    display:block;color:var(--text-muted);
+    font-size:0.85rem;letter-spacing:0.5px;margin-bottom:1rem;
+  }
+  .lightbox-info p{
+    max-width:620px;margin:0 auto;
+    font-size:0.95rem;line-height:1.7;
+    color:rgba(232,220,200,0.85);
+  }
+  .lightbox-close,.lightbox-prev,.lightbox-next{
+    position:fixed;background:none;border:none;
+    color:var(--text-light);cursor:pointer;z-index:3001;
+    transition:color 0.3s ease;
+  }
+  .lightbox-close:hover,.lightbox-prev:hover,.lightbox-next:hover{color:var(--accent);}
+  .lightbox-close{top:1.6rem;right:2rem;font-size:2.2rem;line-height:1;}
+  .lightbox-prev,.lightbox-next{top:50%;transform:translateY(-50%);font-size:2.6rem;}
+  .lightbox-prev{left:1.5rem;}
+  .lightbox-next{right:1.5rem;}
+
+  /* ---------- RESPONSIVE ---------- */
+  @media (max-width:900px){
+    nav ul{
+      position:fixed;top:0;right:0;height:100vh;width:75%;
+      background:rgba(74,55,40,0.97);
+      flex-direction:column;justify-content:center;align-items:flex-start;
+      padding:2rem 2rem;gap:1.3rem;
+      transform:translateX(100%);
+      transition:transform 0.4s ease;
+      overflow-y:auto;
+    }
+    nav ul.open{transform:translateX(0);}
+    .nav-toggle{display:block;}
+    .works-grid{grid-template-columns:repeat(2,1fr);gap:1.6rem;}
+    .lightbox-prev,.lightbox-next{font-size:1.8rem;}
+    .lightbox-prev{left:0.6rem;}
+    .lightbox-next{right:0.6rem;}
+    .lightbox-close{top:1rem;right:1.2rem;font-size:1.8rem;}
+  }
+  @media (max-width:560px){
+    .works-grid{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+
+<nav id="navbar">
+  <a href="index.html" class="back-link" data-i18n="nav.back">← Back to Portfolio</a>
+  <button class="nav-toggle" id="navToggle">&#9776;</button>
+  <ul id="navMenu">
+    <li><a href="acrylic-canvas.html" data-i18n="nav.acrylic">Acrylic</a></li>
+    <li><a href="graphite.html" data-i18n="nav.graphite">Graphite</a></li>
+    <li><a href="watercolor.html" class="active" data-i18n="nav.watercolor">Watercolor</a></li>
+    <li><a href="digital.html" data-i18n="nav.digital">Digital</a></li>
+    <li><a href="mixed-media-murals.html" data-i18n="nav.mixed">Murals, Relief & Prints</a></li>
+    <li><a href="index.html#contact" data-i18n="nav.contact">Contact</a></li>
+    <li class="lang-switch" id="langSwitch">
+      <button class="lang-btn" id="langBtn" type="button">EN <span class="lang-caret">▾</span></button>
+      <ul class="lang-dropdown" id="langDropdown">
+        <li><button type="button" data-lang="en">🇬🇧 English</button></li>
+        <li><button type="button" data-lang="tr">🇹🇷 Türkçe</button></li>
+        <li><button type="button" data-lang="fr">🇫🇷 Français</button></li>
+        <li><button type="button" data-lang="pt">🇵🇹 Português</button></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+<section class="page-hero">
+  <div class="section-label fade-in" data-i18n="nav.technique">Technique</div>
+  <h1 class="fade-in" data-i18n="page.title">Watercolor</h1>
+  <p class="fade-in" data-i18n="page.desc">Transparent, fluid studies in landscape and portraiture, where water and pigment move together on paper.</p>
+</section>
+
+<section class="works-section">
+  <div class="works-grid" id="worksGrid"></div>
+</section>
+
+<footer><span data-i18n="footer.text">&copy; 2026 Delanei Pinto. All rights reserved.</span></footer>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox">
+  <button class="lightbox-close" id="lightboxClose" aria-label="Close">&times;</button>
+  <button class="lightbox-prev" id="lightboxPrev" aria-label="Previous work">&#8249;</button>
+  <button class="lightbox-next" id="lightboxNext" aria-label="Next work">&#8250;</button>
+  <div class="lightbox-content">
+    <img id="lightboxImg" src="" alt="">
+    <div class="lightbox-info">
+      <h3 id="lightboxTitle"></h3>
+      <span class="lightbox-meta" id="lightboxMeta"></span>
+      <p id="lightboxDesc"></p>
+    </div>
+  </div>
+</div>
+
+<script>
+  if (window.history.scrollRestoration) {
+    window.history.scrollRestoration = 'manual';
+  }
+
+  const translations = {
+    en: {
+      "nav.back":"← Back to Portfolio","nav.acrylic":"Acrylic","nav.graphite":"Graphite","nav.watercolor":"Watercolor","nav.digital":"Digital","nav.mixed":"Murals, Relief & Prints","nav.contact":"Contact","nav.technique":"Technique",
+      "page.title":"Watercolor","page.desc":"Transparent, fluid studies in landscape and portraiture, where water and pigment move together on paper.",
+      "footer.text":"© 2026 Delanei Pinto. All rights reserved."
+    },
+    tr: {
+      "nav.back":"← Portfolyoya Dön","nav.acrylic":"Akrilik","nav.graphite":"Karakalem ve Renkli Kalem","nav.watercolor":"Sulu Boya","nav.digital":"Dijital","nav.mixed":"Duvar Resimleri, Kabartma ve Baskılar","nav.contact":"İletişim","nav.technique":"Teknik",
+      "page.title":"Sulu Boya","page.desc":"Suyun ve pigmentin kâğıt üzerinde birlikte hareket ettiği, manzara ve portrede saydam, akışkan çalışmalar.",
+      "footer.text":"© 2026 Delanei Pinto. Tüm hakları saklıdır."
+    },
+    fr: {
+      "nav.back":"← Retour au Portfolio","nav.acrylic":"Acrylique","nav.graphite":"Graphite et Crayons de Couleur","nav.watercolor":"Aquarelle","nav.digital":"Numérique","nav.mixed":"Murales, Reliefs et Estampes","nav.contact":"Contact","nav.technique":"Technique",
+      "page.title":"Aquarelle","page.desc":"Études transparentes et fluides de paysages et de portraits, où l'eau et le pigment se déplacent ensemble sur le papier.",
+      "footer.text":"© 2026 Delanei Pinto. Tous droits réservés."
+    },
+    pt: {
+      "nav.back":"← Voltar ao Portfólio","nav.acrylic":"Acrílico","nav.graphite":"Grafite e Lápis de Cor","nav.watercolor":"Aquarela","nav.digital":"Digital","nav.mixed":"Murais, Relevos e Gravuras","nav.contact":"Contato","nav.technique":"Técnica",
+      "page.title":"Aquarela","page.desc":"Estudos transparentes e fluidos de paisagem e retrato, onde água e pigmento se movem juntos sobre o papel.",
+      "footer.text":"© 2026 Delanei Pinto. Todos os direitos reservados."
+    },
+  };
+
+  var __isInternalNav = sessionStorage.getItem('internalNav') === '1';
+  if (!__isInternalNav) {
+    localStorage.setItem('lang', 'en');
+  } else {
+    sessionStorage.removeItem('internalNav');
+  }
+  let currentLang = localStorage.getItem('lang') || 'en';
+
+  function applyLanguage(lang){
+    if (!translations[lang]) lang = 'en';
+    currentLang = lang;
+    localStorage.setItem('lang', lang);
+    const dict = translations[lang];
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const key = el.getAttribute('data-i18n');
+      if (dict[key] !== undefined) el.textContent = dict[key];
+    });
+    const langBtn = document.getElementById('langBtn');
+    if (langBtn) langBtn.innerHTML = lang.toUpperCase() + ' <span class="lang-caret">▾</span>';
+    document.querySelectorAll('.lang-dropdown button').forEach(btn => {
+      btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
+    });
+    if (typeof renderWorks === 'function') renderWorks(true);
+    if (typeof refreshLightboxIfOpen === 'function') refreshLightboxIfOpen();
+  }
+
+  document.addEventListener('DOMContentLoaded', () => { applyLanguage(currentLang); });
+  if (document.readyState !== 'loading') applyLanguage(currentLang);
+
+  const langSwitchEl = document.getElementById('langSwitch');
+  const langBtnEl = document.getElementById('langBtn');
+  if (langSwitchEl && langBtnEl) {
+    langBtnEl.addEventListener('click', (e) => {
+      e.stopPropagation();
+      langSwitchEl.classList.toggle('open');
+    });
+    document.querySelectorAll('.lang-dropdown button').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        applyLanguage(btn.getAttribute('data-lang'));
+        langSwitchEl.classList.remove('open');
+      });
+    });
+    document.addEventListener('click', () => langSwitchEl.classList.remove('open'));
+  }
+
+  function handleImgError(img, title, technique){
+    const wrap = img.parentElement;
+    img.remove();
+    const ph = document.createElement('div');
+    ph.className = 'placeholder-img';
+    ph.innerHTML = technique
+      ? `<div>${title}</div><div style="margin-top:6px;font-size:0.65rem;opacity:0.8;">${technique}</div>`
+      : title;
+    wrap.insertBefore(ph, wrap.firstChild);
+  }
+
+  const navToggle = document.getElementById('navToggle');
+  const navMenu = document.getElementById('navMenu');
+  navToggle.addEventListener('click', () => navMenu.classList.toggle('open'));
+
+  // Mark any internal page-to-page navigation so the destination page
+  // skips the English reset and keeps the currently selected language.
+  document.querySelectorAll('a[href$=".html"]').forEach(link => {
+    link.addEventListener('click', function() {
+      sessionStorage.setItem('internalNav', '1');
+    });
+  });
+
+  // ---------- Custom cursor (desktop only) ----------
+  if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+    document.body.classList.add('custom-cursor-active');
+    const dot = document.createElement('div');
+    dot.id = 'cursorDot';
+    document.body.appendChild(dot);
+
+    let mouseX = 0, mouseY = 0, dotX = 0, dotY = 0;
+    window.addEventListener('mousemove', e => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+    });
+
+    function animateCursor() {
+      dotX += (mouseX - dotX) * 0.14;
+      dotY += (mouseY - dotY) * 0.14;
+      dot.style.transform = `translate(${dotX}px, ${dotY}px) translate(-50%, -50%)`;
+      requestAnimationFrame(animateCursor);
+    }
+    animateCursor();
+
+    document.querySelectorAll('a, .work, .work-card, button').forEach(el => {
+      el.addEventListener('mouseenter', () => dot.classList.add('cursor-hover'));
+      el.addEventListener('mouseleave', () => dot.classList.remove('cursor-hover'));
+    });
+  }
+
+  // Skip the intro animation when returning to the portfolio
+  const backLink = document.querySelector('a[href*="index"], a[href="/"], .back-link');
+  if (backLink) {
+    backLink.addEventListener('click', function() {
+      sessionStorage.setItem('internalNav', '1');
+    });
+  }
+
+  const works = [
+    { year: "–", img: "images/work-watercolor-river-landscape.jpg", i18n: {
+      en:{ title:"River's Edge", technique:"Watercolor on paper", desc:"A tranquil watercolor landscape where light, water, and reflection merge into a meditative study of place." },
+      tr:{ title:"Nehrin Kıyısı", technique:"Kağıt üzerine sulu boya", desc:"Işığın, suyun ve yansımanın birleştiği, bir mekâna dair derin bir çalışma sunan sakin bir sulu boya manzara." },
+      fr:{ title:"Le Bord de la Rivière", technique:"Aquarelle sur papier", desc:"Un paysage aquarelle paisible où lumière, eau et reflet se fondent en une étude méditative du lieu." },
+      pt:{ title:"Margem do Rio", technique:"Aquarela sobre papel", desc:"Uma paisagem aquarela tranquila onde luz, água e reflexo se fundem num estudo meditativo do lugar." }
+    }},
+    { year: "–", img: "images/work-watercolor-woman-portrait.jpg", i18n: {
+      en:{ title:"Upward Gaze", technique:"Watercolor on paper", desc:"Translucent washes of color build this watercolor portrait, capturing light as it falls across the face." },
+      tr:{ title:"Yukarı Bakış", technique:"Kağıt üzerine sulu boya", desc:"Yüzün üzerine düşen ışığı yakalayan bu sulu boya portreyi, saydam renk katmanları inşa eder." },
+      fr:{ title:"Regard Vers le Haut", technique:"Aquarelle sur papier", desc:"Des lavis translucides de couleur construisent ce portrait à l'aquarelle, capturant la lumière qui tombe sur le visage." },
+      pt:{ title:"Olhar Para o Alto", technique:"Aquarela sobre papel", desc:"Camadas translúcidas de cor constroem este retrato em aquarela, capturando a luz que cai sobre o rosto." }
+    }},
+    { year: "–", img: "images/work-watercolor-fishing-boat.jpg", i18n: {
+      en:{ title:"H. Akyel", technique:"Watercolor on paper", desc:"A small fishing boat rendered en plein air, anchoring memory and everyday life within a quiet harbor scene." },
+      tr:{ title:"H. Akyel", technique:"Kağıt üzerine sulu boya", desc:"Açık havada resmedilen küçük bir balıkçı teknesi, sessiz bir liman manzarasında hafızayı ve gündelik yaşamı sabitler." },
+      fr:{ title:"H. Akyel", technique:"Aquarelle sur papier", desc:"Un petit bateau de pêche peint en plein air, ancrant la mémoire et la vie quotidienne dans une scène de port paisible." },
+      pt:{ title:"H. Akyel", technique:"Aquarela sobre papel", desc:"Um pequeno barco de pesca pintado ao ar livre, ancorando memória e vida cotidiana numa cena de porto tranquila." }
+    }},
+    { year: "–", img: "images/work-watercolor-blue-flower.jpg", i18n: {
+      en:{ title:"Blue Bloom", technique:"Watercolor on paper", desc:"A botanical study in watercolor, exploring transparency and bloom through layered washes of blue." },
+      tr:{ title:"Mavi Açılım", technique:"Kağıt üzerine sulu boya", desc:"Katmanlı mavi yıkamalar aracılığıyla saydamlığı ve açılmayı keşfeden botanik bir sulu boya çalışması." },
+      fr:{ title:"Floraison Bleue", technique:"Aquarelle sur papier", desc:"Une étude botanique à l'aquarelle, explorant la transparence et l'éclosion à travers des lavis de bleu superposés." },
+      pt:{ title:"Floração Azul", technique:"Aquarela sobre papel", desc:"Um estudo botânico em aquarela, explorando transparência e floração através de camadas de azul." }
+    }},
+    { year: "–", img: "images/work-watercolor-vintage-car.jpg", i18n: {
+      en:{ title:"Forgotten", technique:"Watercolor on paper", desc:"A rusted vintage car reclaimed by grass and time, rendered in watercolor as a meditation on decay and memory." },
+      tr:{ title:"Unutulmuş", technique:"Kağıt üzerine sulu boya", desc:"Otlar ve zaman tarafından geri alınmış paslı bir klasik otomobil, çürüme ve hafıza üzerine bir meditasyon olarak sulu boyayla resmedilmiş." },
+      fr:{ title:"Oublié", technique:"Aquarelle sur papier", desc:"Une voiture ancienne rouillée reprise par l'herbe et le temps, peinte à l'aquarelle comme une méditation sur le déclin et la mémoire." },
+      pt:{ title:"Esquecido", technique:"Aquarela sobre papel", desc:"Um carro antigo enferrujado retomado pela grama e pelo tempo, pintado em aquarela como uma meditação sobre decadência e memória." }
+    }}
+  ];
+
+  const grid = document.getElementById('worksGrid');
+  function renderWorks(skipAnimation){
+    grid.innerHTML = '';
+    works.forEach((work, index) => {
+      const w = work.i18n[currentLang] || work.i18n.en;
+      const el = document.createElement('div');
+      el.className = skipAnimation ? 'work-card fade-in visible' : 'work-card fade-in';
+      el.innerHTML = `
+        <div class="work-card-img">
+          <img src="${work.img}" alt="${w.title}" onerror="handleImgError(this,'${w.title.replace(/'/g,"\\'")}','${w.technique}, ${work.year}')">
+        </div>
+        <div class="work-card-body">
+          <h3>${w.title}</h3>
+          <span class="work-card-year">${w.technique}, ${work.year}</span>
+          <p class="work-card-desc">${w.desc}</p>
+        </div>
+      `;
+      el.addEventListener('click', () => openLightbox(index));
+      grid.appendChild(el);
+    });
+  }
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15 });
+  renderWorks(false);
+  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+  const lightbox = document.getElementById('lightbox');
+  const lightboxImg = document.getElementById('lightboxImg');
+  const lightboxTitle = document.getElementById('lightboxTitle');
+  const lightboxMeta = document.getElementById('lightboxMeta');
+  const lightboxDesc = document.getElementById('lightboxDesc');
+  const lightboxClose = document.getElementById('lightboxClose');
+  const lightboxPrev = document.getElementById('lightboxPrev');
+  const lightboxNext = document.getElementById('lightboxNext');
+  let currentWorkIndex = 0;
+
+  function renderLightbox(index) {
+    const work = works[index];
+    const w = work.i18n[currentLang] || work.i18n.en;
+    lightboxImg.src = work.img;
+    lightboxImg.alt = w.title;
+    lightboxImg.onerror = () => handleImgError(lightboxImg, w.title, `${w.technique}, ${work.year}`);
+    lightboxTitle.textContent = w.title;
+    lightboxMeta.textContent = `${w.technique}, ${work.year}`;
+    lightboxDesc.textContent = w.desc;
+  }
+
+  function refreshLightboxIfOpen() {
+    if (lightbox && lightbox.classList.contains('active')) renderLightbox(currentWorkIndex);
+  }
+
+  function openLightbox(index) {
+    currentWorkIndex = index;
+    renderLightbox(currentWorkIndex);
+    lightbox.classList.add('active');
+  }
+  function closeLightbox() { lightbox.classList.remove('active'); }
+  function showNextWork() {
+    currentWorkIndex = (currentWorkIndex + 1) % works.length;
+    renderLightbox(currentWorkIndex);
+  }
+  function showPrevWork() {
+    currentWorkIndex = (currentWorkIndex - 1 + works.length) % works.length;
+    renderLightbox(currentWorkIndex);
+  }
+
+  lightboxClose.addEventListener('click', closeLightbox);
+  lightboxNext.addEventListener('click', showNextWork);
+  lightboxPrev.addEventListener('click', showPrevWork);
+  lightbox.addEventListener('click', (e) => { if (e.target === lightbox) closeLightbox(); });
+  document.addEventListener('keydown', (e) => {
+    if (!lightbox.classList.contains('active')) return;
+    if (e.key === 'Escape') closeLightbox();
+    if (e.key === 'ArrowRight') showNextWork();
+    if (e.key === 'ArrowLeft') showPrevWork();
+  });
+</script>
+
+</body>
+</html>
