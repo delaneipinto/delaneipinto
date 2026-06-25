@@ -76,6 +76,8 @@
   nav ul li a:hover{opacity:1;color:var(--accent-soft);}
   nav ul li a.active{opacity:1;color:var(--accent);}
   .nav-toggle{display:none;background:none;border:none;color:var(--text-light);font-size:1.6rem;cursor:pointer;}
+  .nav-toggle-group{display:block;}
+  .lang-switch-mobile{display:none;}
 
   /* ---------- LANGUAGE SWITCHER ---------- */
   .lang-switch{position:relative;list-style:none;}
@@ -1198,14 +1200,14 @@
   @media (max-width:768px){
     /* Intro screen */
     .intro-panel.left{
-      padding-right:0;
+      padding-right:8vw;
       justify-content:flex-end;
       background:
         linear-gradient(rgba(0,0,0,0.55),rgba(0,0,0,0.55)),
         url('images/hero-photo.jpg') center 30%/cover no-repeat;
     }
     .intro-panel.right{
-      padding-left:0;
+      padding-left:8vw;
       justify-content:flex-start;
       background:
         linear-gradient(rgba(0,0,0,0.55),rgba(0,0,0,0.55)),
@@ -1239,11 +1241,14 @@
     }
     .hero-photo{
       width:100%;
-      height:50vw;
+      height:45vw;
       aspect-ratio:auto;
       flex:none;
       align-self:center;
       margin-top:1.5rem;
+    }
+    .hero-photo img{
+      object-position:center top;
     }
     .hero-footer{
       position:relative;
@@ -1270,6 +1275,79 @@
       text-align:center;
       margin-top:1rem;
       width:100%;
+    }
+
+    /* Hamburger icon: fixed footprint so ☰ / × never shifts or disappears */
+    .nav-toggle{
+      width:2rem;
+      height:2rem;
+      line-height:2rem;
+      text-align:center;
+      flex-shrink:0;
+    }
+
+    /* Gallery: smaller cards on narrow phones */
+    .gallery-grid{
+      grid-template-columns:repeat(2,1fr);
+      grid-auto-rows:140px;
+      gap:0.7rem;
+    }
+    .gallery-grid .work:nth-child(1),
+    .gallery-grid .work:nth-child(4),
+    .gallery-grid .work:nth-child(7),
+    .gallery-grid .work:nth-child(10){grid-row:span 1;}
+    .work-overlay{padding:0.8rem;}
+    .work-overlay h3{font-size:0.85rem;}
+    .work-overlay span{font-size:0.68rem;}
+
+    /* Language switcher: compact trigger in the nav bar, left of the hamburger */
+    #langSwitch{display:none;}
+    .nav-toggle-group{
+      display:flex;
+      align-items:center;
+      gap:0.9rem;
+    }
+    .lang-switch-mobile{
+      position:relative;
+      display:block;
+    }
+    .lang-btn-mobile{
+      background:none;
+      border:none;
+      color:var(--accent);
+      font-family:'DM Sans',sans-serif;
+      font-size:0.7rem;
+      letter-spacing:0.1em;
+      text-transform:uppercase;
+      cursor:pointer;
+      padding:0;
+    }
+    .lang-switch-mobile .lang-dropdown{
+      position:absolute;
+      top:calc(100% + 0.6rem);
+      right:0;
+      left:auto;
+      background:rgba(44,31,20,0.97);
+      border:1px solid rgba(232,220,200,0.15);
+      min-width:140px;
+      padding:0.4rem 0;
+      opacity:0;
+      visibility:hidden;
+      transform:translateY(-6px);
+      transition:opacity 0.25s ease, transform 0.25s ease, visibility 0.25s;
+      z-index:1002;
+      max-height:none;
+      width:auto;
+      margin-top:0;
+    }
+    .lang-switch-mobile.open .lang-dropdown{
+      opacity:1;
+      visibility:visible;
+      transform:translateY(0);
+    }
+    .lang-switch-mobile .lang-dropdown button{
+      font-size:0.8rem;
+      padding:0.5rem 1rem;
     }
   }
 </style>
@@ -1362,7 +1440,18 @@
 
 <nav id="navbar">
   <div class="logo">DELANEI PINTO</div>
-  <button class="nav-toggle" id="navToggle">&#9776;</button>
+  <div class="nav-toggle-group">
+    <div class="lang-switch-mobile" id="langSwitchMobile">
+      <button class="lang-btn-mobile" id="langBtnMobile" type="button">EN</button>
+      <ul class="lang-dropdown">
+        <li><button type="button" data-lang="en">🇬🇧 English</button></li>
+        <li><button type="button" data-lang="tr">🇹🇷 Türkçe</button></li>
+        <li><button type="button" data-lang="fr">🇫🇷 Français</button></li>
+        <li><button type="button" data-lang="pt">🇵🇹 Português</button></li>
+      </ul>
+    </div>
+    <button class="nav-toggle" id="navToggle">&#9776;</button>
+  </div>
   <ul id="navMenu">
     <li><a href="#artist" class="nav-link" data-i18n="nav.artist">Artist</a></li>
     <li><a href="#introduction" class="nav-link" data-i18n="nav.introduction">Introduction</a></li>
@@ -1910,6 +1999,8 @@
     });
     const langBtn = document.getElementById('langBtn');
     if (langBtn) langBtn.innerHTML = lang.toUpperCase() + ' <span class="lang-caret">▾</span>';
+    const langBtnMobile = document.getElementById('langBtnMobile');
+    if (langBtnMobile) langBtnMobile.textContent = lang.toUpperCase();
     document.querySelectorAll('.lang-dropdown button').forEach(btn => {
       btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
     });
@@ -1924,23 +2015,41 @@
 
   const langSwitchEl = document.getElementById('langSwitch');
   const langBtnEl = document.getElementById('langBtn');
+  const langSwitchMobileEl = document.getElementById('langSwitchMobile');
+  const langBtnMobileEl = document.getElementById('langBtnMobile');
+  const allLangSwitches = [langSwitchEl, langSwitchMobileEl].filter(Boolean);
+
+  function closeAllLangSwitches() {
+    allLangSwitches.forEach(el => el.classList.remove('open'));
+  }
+
   if (langSwitchEl && langBtnEl) {
     langBtnEl.addEventListener('click', (e) => {
       e.stopPropagation();
-      langSwitchEl.classList.toggle('open');
+      const willOpen = !langSwitchEl.classList.contains('open');
+      closeAllLangSwitches();
+      langSwitchEl.classList.toggle('open', willOpen);
     });
-    document.querySelectorAll('.lang-dropdown button').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        applyLanguage(btn.getAttribute('data-lang'));
-        langSwitchEl.classList.remove('open');
-        const navMenuEl = document.getElementById('navMenu');
-        if (navMenuEl) navMenuEl.classList.remove('open');
-        setNavToggleIcon(false);
-      });
-    });
-    document.addEventListener('click', () => langSwitchEl.classList.remove('open'));
   }
+  if (langSwitchMobileEl && langBtnMobileEl) {
+    langBtnMobileEl.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const willOpen = !langSwitchMobileEl.classList.contains('open');
+      closeAllLangSwitches();
+      langSwitchMobileEl.classList.toggle('open', willOpen);
+    });
+  }
+  document.querySelectorAll('.lang-dropdown button').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      applyLanguage(btn.getAttribute('data-lang'));
+      closeAllLangSwitches();
+      const navMenuEl = document.getElementById('navMenu');
+      if (navMenuEl) navMenuEl.classList.remove('open');
+      setNavToggleIcon(false);
+    });
+  });
+  document.addEventListener('click', closeAllLangSwitches);
 
   // ---------- Split intro ----------
   (function(){
@@ -1999,8 +2108,7 @@
   function closeMobileNav() {
     navMenu.classList.remove('open');
     setNavToggleIcon(false);
-    const langSwitchEl2 = document.getElementById('langSwitch');
-    if (langSwitchEl2) langSwitchEl2.classList.remove('open');
+    document.querySelectorAll('.lang-switch, .lang-switch-mobile').forEach(el => el.classList.remove('open'));
   }
 
   navToggle.addEventListener('click', (e) => {
