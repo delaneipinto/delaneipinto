@@ -1151,6 +1151,59 @@
     .intro-tagline{font-size:0.58rem;letter-spacing:1.5px;transform:translate(-50%, calc(-50% + (clamp(1.8rem,11vw,3rem) / 2) + 10vh));}
     .intro-cue{font-size:0.62rem;bottom:1.6rem;}
   }
+
+  /* ---------- MOBILE: INTRO + HERO FIX ---------- */
+  @media (max-width:768px){
+    /* Intro screen */
+    .intro-panel.left,
+    .intro-panel.right{
+      background:#0e0e0e;
+      padding-right:0;
+      padding-left:0;
+    }
+    .intro-panel-icon{display:none;}
+    .intro-panel-text{
+      font-size:clamp(2.5rem,12vw,5rem);
+      white-space:nowrap;
+    }
+    .intro-tagline{
+      font-size:0.65rem;
+      letter-spacing:0.15em;
+      transform:translate(-50%, calc(-50% + (clamp(2.5rem,12vw,5rem) / 2) + 12vh));
+    }
+
+    /* Hero section */
+    nav{background:rgba(74,55,40,0.92);backdrop-filter:blur(6px);}
+    .hero-shape,
+    .hero-pattern-strip{display:none;}
+    #hero{
+      height:auto;
+      min-height:100vh;
+      padding:7rem 6% 2rem;
+    }
+    .hero-main{padding-bottom:1.5rem;}
+    .hero-text{margin-top:0;}
+    .hero-text .art,
+    .hero-text .portfolio{
+      font-size:clamp(3rem,15vw,5rem);
+    }
+    .hero-photo{
+      width:100%;
+      height:50vw;
+      aspect-ratio:auto;
+      flex:none;
+      align-self:center;
+      margin-top:1.5rem;
+    }
+    .hero-footer{
+      position:relative;
+      left:auto;right:auto;bottom:auto;
+      flex-direction:column;
+      align-items:flex-start;
+      gap:0.6rem;
+      margin-top:1.5rem;
+    }
+  }
 </style>
 </head>
 <body class="intro-locked">
