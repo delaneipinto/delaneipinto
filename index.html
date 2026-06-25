@@ -265,6 +265,7 @@
   }
   .commission-thanks.show{display:block;}
   .commission-form.hide{display:none;}
+  #commissionError{color:#b3261e;}
 
   section{
     position:relative;
@@ -1661,7 +1662,7 @@
       </div>
       <div class="form-group">
         <label data-i18n="commission.found">How did you find me?</label>
-        <select id="commFound" name="found">
+        <select id="commFound" name="source">
           <option data-i18n="commission.found.instagram">Instagram</option>
           <option data-i18n="commission.found.website">Portfolio Website</option>
           <option data-i18n="commission.found.exhibition">Exhibition</option>
@@ -1672,6 +1673,7 @@
       <button type="submit" class="commission-submit" data-i18n="commission.submit">Send Inquiry</button>
     </form>
     <div class="commission-thanks" id="commissionThanks" data-i18n="commission.thanks">Thank you for reaching out. Delanei will get back to you within 3–5 business days.</div>
+    <div class="commission-thanks" id="commissionError" data-i18n="commission.error">Something went wrong. Please try again or email delaneipinto@gmail.com directly.</div>
   </div>
 </div>
 
@@ -1738,7 +1740,8 @@
       "commission.found.instagram":"Instagram","commission.found.website":"Portfolio Website","commission.found.exhibition":"Exhibition","commission.found.wom":"Word of Mouth","commission.found.other":"Other",
       "commission.submit":"Send Inquiry",
       "commission.errorRequired":"This field is required.",
-      "commission.thanks":"Thank you for reaching out. Delanei will get back to you within 3–5 business days."
+      "commission.thanks":"Thank you for reaching out. Delanei will get back to you within 3–5 business days.",
+      "commission.error":"Something went wrong. Please try again or email delaneipinto@gmail.com directly."
     },
     tr: {
       "nav.artist":"Sanatçı","nav.introduction":"Giriş","nav.manifesto":"Manifesto","nav.works":"Eserler","nav.techniques":"Teknikler","nav.vision":"Vizyon","nav.contact":"İletişim",
@@ -1785,7 +1788,8 @@
       "commission.found.instagram":"Instagram","commission.found.website":"Portfolyo Web Sitesi","commission.found.exhibition":"Sergi","commission.found.wom":"Tavsiye Üzerine","commission.found.other":"Diğer",
       "commission.submit":"Gönder",
       "commission.errorRequired":"Bu alan zorunludur.",
-      "commission.thanks":"Mesajınız için teşekkürler. Delanei en kısa sürede size geri dönecektir."
+      "commission.thanks":"Mesajınız için teşekkürler. Delanei en kısa sürede size geri dönecektir.",
+      "commission.error":"Bir şeyler ters gitti. Lütfen tekrar deneyin veya delaneipinto@gmail.com adresine e-posta gönderin."
     },
     fr: {
       "nav.artist":"Artiste","nav.introduction":"Introduction","nav.manifesto":"Manifeste","nav.works":"Œuvres","nav.techniques":"Techniques","nav.vision":"Vision","nav.contact":"Contact",
@@ -1832,7 +1836,8 @@
       "commission.found.instagram":"Instagram","commission.found.website":"Site Portfolio","commission.found.exhibition":"Exposition","commission.found.wom":"Bouche à Oreille","commission.found.other":"Autre",
       "commission.submit":"Envoyer",
       "commission.errorRequired":"Ce champ est obligatoire.",
-      "commission.thanks":"Merci de votre message. Delanei vous répondra dans les 3 à 5 jours ouvrables."
+      "commission.thanks":"Merci de votre message. Delanei vous répondra dans les 3 à 5 jours ouvrables.",
+      "commission.error":"Une erreur est survenue. Veuillez réessayer ou écrire directement à delaneipinto@gmail.com."
     },
     pt: {
       "nav.artist":"Artista","nav.introduction":"Introdução","nav.manifesto":"Manifesto","nav.works":"Obras","nav.techniques":"Técnicas","nav.vision":"Visão","nav.contact":"Contato",
@@ -1879,7 +1884,8 @@
       "commission.found.instagram":"Instagram","commission.found.website":"Site do Portfólio","commission.found.exhibition":"Exposição","commission.found.wom":"Recomendação","commission.found.other":"Outro",
       "commission.submit":"Enviar",
       "commission.errorRequired":"Este campo é obrigatório.",
-      "commission.thanks":"Obrigado pelo contacto. Delanei responderá em 3 a 5 dias úteis."
+      "commission.thanks":"Obrigado pelo contacto. Delanei responderá em 3 a 5 dias úteis.",
+      "commission.error":"Algo correu mal. Tente novamente ou envie um e-mail para delaneipinto@gmail.com."
     }
   };
 
@@ -2233,6 +2239,8 @@
       modal.classList.add('active');
       form.classList.remove('hide');
       thanks.classList.remove('show');
+      const errorEl = document.getElementById('commissionError');
+      if (errorEl) errorEl.classList.remove('show');
       form.reset();
       document.querySelectorAll('.form-error-msg').forEach(e => e.classList.remove('show'));
       document.querySelectorAll('.form-group input, .form-group textarea').forEach(e => e.classList.remove('error'));
@@ -2267,26 +2275,35 @@
       });
       if (!valid) return;
 
-      const get = id => { const el = document.getElementById(id); return el ? el.value : ''; };
-      const body = [
-        'Name: ' + get('commName'),
-        'Email: ' + get('commEmail'),
-        'Country: ' + get('commCountry'),
-        'Type of Work: ' + get('commWorkType'),
-        'Preferred Technique: ' + get('commTechnique'),
-        'Budget: ' + get('commBudget'),
-        'Dimensions / Scale: ' + get('commDimensions'),
-        'How they found me: ' + get('commFound'),
-        '',
-        'Project Description:',
-        get('commDescription')
-      ].join('\n');
-      const subject = 'Commission Inquiry from ' + get('commName');
-      const mailto = 'mailto:delaneipinto@gmail.com?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
-      window.location.href = mailto;
+      const errorEl = document.getElementById('commissionError');
+      if (errorEl) errorEl.classList.remove('show');
 
-      form.classList.add('hide');
-      thanks.classList.add('show');
+      fetch('https://formspree.io/f/mqevpwad', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: form.querySelector('[name="name"]').value,
+          email: form.querySelector('[name="email"]').value,
+          country: form.querySelector('[name="country"]').value,
+          workType: form.querySelector('[name="workType"]').value,
+          technique: form.querySelector('[name="technique"]').value,
+          budget: form.querySelector('[name="budget"]').value,
+          dimensions: form.querySelector('[name="dimensions"]').value,
+          description: form.querySelector('[name="description"]').value,
+          source: form.querySelector('[name="source"]').value
+        })
+      })
+      .then(res => {
+        if (res.ok) {
+          form.classList.add('hide');
+          thanks.classList.add('show');
+        } else {
+          if (errorEl) errorEl.classList.add('show');
+        }
+      })
+      .catch(() => {
+        if (errorEl) errorEl.classList.add('show');
+      });
     });
   })();
 
